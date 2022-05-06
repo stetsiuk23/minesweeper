@@ -1,0 +1,48 @@
+<?xml version="1.0" encoding="utf-8"?>
+<PreferenceScreen xmlns:android="http://schemas.android.com/apk/res/android">
+        <ListPreference
+            android:entries="@array/entries"
+            android:entryValues="@array/entry_values"
+            android:key="listSetting"
+            android:defaultValue="Easy"
+            android:title="Set weight">
+        </ListPreference>
+        <PreferenceCategory
+            android:title="Custom complication"
+            android:key="customCompl">
+            <ListPreference
+                android:key="mWidth"
+                android:entryValues="@array/width_values"
+                android:entries="@array/width_values"
+                android:dialogTitle="Set minefield width:"
+                android:title="Set minefield width"
+                android:defaultValue="8">
+            </ListPreference>
+            <ListPreference
+                android:entries="@array/height_values"
+                android:entryValues="@array/height_values"
+                android:key="mHeight"
+                android:dialogTitle="Set minefield height:"
+                android:defaultValue="13"
+                android:title="Set minefield height">
+            </ListPreference>
+            <ListPreference
+                android:entryValues="@array/percent_values"
+                android:entries="@array/percent_values"
+                android:key="mMinesCount"
+                android:dialogTitle="Set mines percent:"
+                android:title="Set mines percent"
+                android:defaultValue="17">
+            </ListPreference>
+        </PreferenceCategory>
+    <PreferenceCategory android:title="Spacing">
+        <ListPreference
+            android:entries="@array/spacing_values"
+            android:entryValues="@array/spacing_values"
+            android:key="spacing"
+            android:title="Set spacing"
+            android:defaultValue="1"
+            android:inputType="numberSigned">
+        </ListPreference>
+    </PreferenceCategory>
+</PreferenceScreen>

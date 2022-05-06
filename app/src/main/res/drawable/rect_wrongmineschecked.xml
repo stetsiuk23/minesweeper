@@ -1,0 +1,6 @@
+<?xml version="1.0" encoding="utf-8"?>
+<shape xmlns:android="http://schemas.android.com/apk/res/android" android:shape="rectangle">
+    <!--<solid android:color="@color/colorWrongMinesChecked"></solid>-->
+    <corners android:radius="2dp"></corners>
+    <gradient android:startColor="@color/colorWrongMinesChecked" android:endColor="@color/colorStrokeWrongMinesChecked" android:angle="45"></gradient>
+</shape>

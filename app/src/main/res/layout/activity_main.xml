@@ -1,0 +1,78 @@
+<?xml version="1.0" encoding="utf-8"?>
+<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    xmlns:tools="http://schemas.android.com/tools"
+    android:orientation="vertical"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    android:background="@color/colorBcgr"
+    tools:context=".MainActivity">
+
+    <LinearLayout
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:orientation="horizontal">
+
+        <Button
+            android:id="@+id/btnSettings"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:layout_weight="1.165"
+            android:onClick="onShowSettings"
+            android:backgroundTint="@android:color/white"
+            android:background="@drawable/ic_miscellaneous_services_24px" />
+
+        <Button
+            android:id="@+id/btnRec"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:layout_weight="1.165"
+            android:onClick="onShowRecords"
+            android:backgroundTint="@android:color/white"
+            android:background="@drawable/ic_emoji_events_24px"/>
+
+        <TextView
+            android:id="@+id/tvMineCount"
+            android:textSize="18dp"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:layout_gravity="center_vertical"
+            android:textColor="@android:color/white"
+            android:gravity="center"
+            android:layout_weight="1"
+            android:text="Mines: 0" />
+
+        <TextView
+            android:id="@+id/tvTimer"
+            android:gravity="center"
+            android:textColor="@android:color/white"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:layout_gravity="center_vertical"
+            android:textSize="18dp"
+            android:layout_weight="1"
+            android:text="Time: 0:00" />
+
+        <Button
+            android:id="@+id/btnStart"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:layout_gravity="center_horizontal"
+            android:layout_weight="1"
+            android:onClick="onStartStop"
+            android:text="Start">
+
+        </Button>
+
+
+    </LinearLayout>
+
+    <GridView
+        android:id="@+id/gvMineField"
+        android:layout_width="match_parent"
+        android:layout_height="match_parent"
+        android:clipToPadding="true"
+        android:gravity="center">
+    </GridView>
+
+</LinearLayout>
