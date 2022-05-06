@@ -179,13 +179,7 @@ public class Minefield {
 
     private void fillPoints(){
         for(int i =0; i<pData.length; i++){
-            //if(points[i]==null) {
                 points[i] = new Point(context, pData[i]);
-            /*}
-            else {
-                //points[i].setDat(pData[i]);
-                points[i].setPointDuringFillingData(pData[i]);
-            }*/
         }
     }
 

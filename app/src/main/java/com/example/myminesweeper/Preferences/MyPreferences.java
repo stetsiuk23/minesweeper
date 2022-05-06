@@ -145,55 +145,27 @@ public class MyPreferences extends PreferenceActivity {
         intent = new Intent(PREF_RESEIVER_ACTION);
         intent.putExtra(PREF_END_SETTINGS_KEY, "");
         sendBroadcast(intent);
-        //Провіряємо чи встановлене значення list. Якщо так то Встановлюємо ці значення інакше значення залишаються незмінні
-        /*notifyCustomData();
-        //Надсилаємо готові значення в Reciever
-        putDataSendResult();*/
     }
 
-    //Провіряє якщо встановлені настройки Custom то вкстановлює всі вибрані Custom значення
-    /*private void notifyCustomData(){
-        if(listPreference.getValue().equals("Custom")){
-            currentWidth = Integer.parseInt(width.getValue());
-            currentHeight = Integer.parseInt(height.getValue());
-            currentMinesCount = Integer.parseInt(minesPercent.getValue());
-        }
-    }
-    //Вставляє готові дані і надсила їх в Receiver
-    private void putDataSendResult(){
-        intent.putExtra(PREF_WIDTH_KEY, currentWidth);
-        intent.putExtra(PREF_HEIGHT_KEY, currentHeight);
-        intent.putExtra(PREF_MINES_PERCENT_KEY, currentMinesCount);
-        intent.putExtra(PREF_SPACING_KEY, Integer.parseInt(spacing.getValue()));
-        sendBroadcast(intent);
-    }*/
+
 
     //Встановлює Easy настройки
     private void setEasySettings(){
         Toast.makeText(getBaseContext(), DefMinefieldSettings.LEVEL_EASY, Toast.LENGTH_SHORT).show();
         listPreference.setSummary("Weight: "+DefMinefieldSettings.LEVEL_EASY);
         category.setEnabled(false);
-        /*currentWidth = DefMinefieldSettings.Easy.WIDTH;
-        currentHeight = DefMinefieldSettings.Easy.HEIGHT;
-        currentMinesCount = DefMinefieldSettings.Easy.MINES_PERCENT;*/
     }
     //Встановлює Medium настройки
     private void setMediumSettings(){
         Toast.makeText(getBaseContext(), DefMinefieldSettings.LEVEL_MEDIUM, Toast.LENGTH_SHORT).show();
         listPreference.setSummary("Weight: "+DefMinefieldSettings.LEVEL_MEDIUM);
         category.setEnabled(false);
-        /*currentWidth = DefMinefieldSettings.Medium.WIDTH;
-        currentHeight = DefMinefieldSettings.Medium.HEIGHT;
-        currentMinesCount = DefMinefieldSettings.Medium.MINES_PERCENT;*/
     }
     //Встановлює Hard настройки
     private void setHardSettings(){
         Toast.makeText(getBaseContext(), DefMinefieldSettings.LEVEL_HARD, Toast.LENGTH_SHORT).show();
         listPreference.setSummary("Weight: "+DefMinefieldSettings.LEVEL_HARD);
         category.setEnabled(false);
-        /*currentWidth = DefMinefieldSettings.Hard.WIDTH;
-        currentHeight = DefMinefieldSettings.Hard.HEIGHT;
-        currentMinesCount = DefMinefieldSettings.Hard.MINES_PERCENT;*/
     }
     //Встановлює Custom настройки
     private void setCustomSettings(){

@@ -377,41 +377,12 @@ public class MainActivity extends AppCompatActivity {
         }
     }
 
-    /*private class MyStartThread extends Thread{
-        @Override
-        public void run() {
-
-        }
-    }
-    private class MyStopThread extends Thread{
-        @Override
-        public void run() {
-
-        }
-    }
-    private class MyTempPointsThread extends Thread{
-        @Override
-        public void run() {
-
-        }
-    }*/
-
 
     //Внутрішній клас який виконується при поверненні значень з Preferences
     private class MyReceiver extends BroadcastReceiver{
         private boolean changed = false;
         @Override
         public void onReceive(Context context, Intent intent) {
-            /*minefield = new Minefield(MainActivity.this, intent.getIntExtra(MyPreferences.PREF_WIDTH_KEY, DefMinefieldSettings.Default.WIDTH),
-                    intent.getIntExtra(MyPreferences.PREF_HEIGHT_KEY, DefMinefieldSettings.Default.HEIGHT),
-                    intent.getIntExtra(MyPreferences.PREF_MINES_PERCENT_KEY, DefMinefieldSettings.Default.MINES_PERCENT) * 0.01);
-            gameLevel = sp.getString("listSetting", DefMinefieldSettings.LEVEL_DEFAULT);
-            if(gameLevel.equals(DefMinefieldSettings.LEVEL_CUSTOM)){
-                gameLevel = DefMinefieldSettings.LEVEL_CUSTOM+"("+intent.getIntExtra(MyPreferences.PREF_WIDTH_KEY, DefMinefieldSettings.Default.WIDTH)+
-                        ", "+intent.getIntExtra(MyPreferences.PREF_HEIGHT_KEY, DefMinefieldSettings.Default.HEIGHT)+
-                        ", "+intent.getIntExtra(MyPreferences.PREF_MINES_PERCENT_KEY, DefMinefieldSettings.Default.MINES_PERCENT) * 0.01+")";
-            }
-            */
 
             if(intent.hasExtra(MyPreferences.PREF_SPACING_KEY)){
                 changed = true;
