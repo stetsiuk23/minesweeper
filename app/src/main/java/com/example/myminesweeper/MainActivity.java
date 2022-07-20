@@ -29,16 +29,12 @@ import java.util.Stack;
 
 public class MainActivity extends AppCompatActivity {
     private Minefield minefield;
-
     private DBHelper dbHelper;
-
     private TextView minesC, timerT;
     private Button startStop, settings;
     private MyTimerTask myTimerTask;
-
     private MyAdapter adapter;
     private GridView gvMinesfield;
-
     private SharedPreferences sp;
     private MyReceiver receiver;
     private String gameLevel;
@@ -54,24 +50,22 @@ public class MainActivity extends AppCompatActivity {
         timerT = (TextView) findViewById(R.id.tvTimer);
         startStop = (Button) findViewById(R.id.btnStart);
         settings = (Button) findViewById(R.id.btnSettings);
-
         dbHelper = new DBHelper(this);
         sp = PreferenceManager.getDefaultSharedPreferences(this);
-        gvSpacing = Integer.parseInt(sp.getString("spacing", ""+DefMinefieldSettings.SPACING));
+        gvSpacing = Integer.parseInt(sp.getString("spacing", "" + DefMinefieldSettings.SPACING));
         receiver = new MyReceiver();
         IntentFilter intentFilter = new IntentFilter();
         intentFilter.addAction(MyPreferences.PREF_RESEIVER_ACTION);
         registerReceiver(receiver, intentFilter);
         checkSavedInstance();
-
         adapter = new MyAdapter(this, R.layout.my_point, minefield, gvSpacing);
         gvMinesfield.setAdapter(adapter);
         adjustGridView();
     }
 
-    private void checkSavedInstance(){
-        if(getLastCustomNonConfigurationInstance()==null){
-            switch (sp.getString("listSetting", DefMinefieldSettings.LEVEL_EASY)){
+    private void checkSavedInstance() {
+        if (getLastCustomNonConfigurationInstance() == null) {
+            switch (sp.getString("listSetting", DefMinefieldSettings.LEVEL_EASY)) {
                 case DefMinefieldSettings.LEVEL_EASY:
                     prefWidth = DefMinefieldSettings.Easy.WIDTH;
                     prefHeight = DefMinefieldSettings.Easy.HEIGHT;
@@ -94,150 +88,136 @@ public class MainActivity extends AppCompatActivity {
                     prefWidth = Integer.parseInt(sp.getString("mWidth", String.valueOf(DefMinefieldSettings.Default.WIDTH)));
                     prefHeight = Integer.parseInt(sp.getString("mHeight", String.valueOf(DefMinefieldSettings.Default.HEIGHT)));
                     prefMinesPercent = Integer.parseInt(sp.getString("mMinesCount", String.valueOf(DefMinefieldSettings.Default.MINES_PERCENT)));
-                    gameLevel = DefMinefieldSettings.LEVEL_CUSTOM +"("+"w: "+prefWidth+", h: "+prefHeight+", per: "+prefMinesPercent+")";
+                    gameLevel = DefMinefieldSettings.LEVEL_CUSTOM + "(" + "w: " + prefWidth + ", h: " + prefHeight + ", per: " + prefMinesPercent + ")";
                     break;
             }
-            minefield = new Minefield(MainActivity.this, prefWidth, prefHeight, prefMinesPercent*0.01);
+            minefield = new Minefield(MainActivity.this, prefWidth, prefHeight, prefMinesPercent * 0.01);
             minefield.fillEmptyData();
             minefield.fillMinefield();
-
-            Log.d("myLog", "after fill minefield");
-        }
-        else {
-            Log.d("myLog", "instance else ma");
+        } else {
             minefield = (Minefield) getLastCustomNonConfigurationInstance();
-            minesC.setText("Mines: "+minefield.getMinesOnScreen());
+            minesC.setText("Mines: " + minefield.getMinesOnScreen());
         }
     }
 
-    public void adjustGridView(){
+    public void adjustGridView() {
         gvMinesfield.setNumColumns(minefield.getWidth());
         gvMinesfield.setHorizontalSpacing(gvSpacing);
         gvMinesfield.setVerticalSpacing(gvSpacing);
-
         gvMinesfield.setOnItemClickListener(new AdapterView.OnItemClickListener() {
             @Override
             public void onItemClick(AdapterView<?> parent, View view, int position, long id) {
-                if(!view.isEnabled())return;
-                    if (minefield.getPoints()[position].getData().equals("*")) {
-                        for(int i = 0; i<minefield.getPoints().length;i++){
-                            if(minefield.getPoints()[i].getData().equals("*")&&
-                            !minefield.getPoints()[i].isEnabledPoint()){
-                                minefield.getPoints()[i].setPointGoodCheckedMines();
-                                continue;
-                            }
-                            if(minefield.getPoints()[i].getData().equals("*")&&
-                                    minefield.getPoints()[i].getCurrentState()!=getDrawable(R.drawable.rect_keepclicked)){
-                                minefield.getPoints()[i].setPointWrongCheckedMines();
-                                continue;
-                            }
-                            minefield.getPoints()[i].setPointClicked();
+                if (!view.isEnabled()) return;
+                if (minefield.getPoints()[position].getData().equals("*")) {
+                    for (int i = 0; i < minefield.getPoints().length; i++) {
+                        if (minefield.getPoints()[i].getData().equals("*") &&
+                                !minefield.getPoints()[i].isEnabledPoint()) {
+                            minefield.getPoints()[i].setPointGoodCheckedMines();
+                            continue;
                         }
-                        minefield.getPoints()[position].setPointLost();
-                        adapter.notifyDataSetChanged();
-                        minefield.setMinesOnScreen(0);
-                        minesC.setText("Mines: "+minefield.getMinesOnScreen());
-                        Toast.makeText(MainActivity.this, "Unfortunately you lost, try again!", Toast.LENGTH_LONG).show();
-                        startStop.setText("Start");
-                        settings.setEnabled(true);
-                        myTimerTask.cancel(true);
-                        return;
+                        if (minefield.getPoints()[i].getData().equals("*") &&
+                                minefield.getPoints()[i].getCurrentState() != getDrawable(R.drawable.rect_keepclicked)) {
+                            minefield.getPoints()[i].setPointWrongCheckedMines();
+                            continue;
+                        }
+                        minefield.getPoints()[i].setPointClicked();
                     }
+                    minefield.getPoints()[position].setPointLost();
+                    adapter.notifyDataSetChanged();
+                    minefield.setMinesOnScreen(0);
+                    minesC.setText("Mines: " + minefield.getMinesOnScreen());
+                    Toast.makeText(MainActivity.this, "Unfortunately you lost, try again!", Toast.LENGTH_LONG).show();
+                    startStop.setText("Start");
+                    settings.setEnabled(true);
+                    myTimerTask.cancel(true);
+                    return;
+                }
 
                 Stack<Integer> inList = new Stack<>();
                 HashMap<Integer, Integer> outList = new HashMap<>();
                 inList.push(position);
-                if(minefield.getPoints()[position].getData().equals("")){
+                if (minefield.getPoints()[position].getData().equals("")) {
                     int mainCursor;
-                    do{
+                    do {
                         mainCursor = inList.pop();
-                        if (!outList.containsValue(mainCursor)){
+                        if (!outList.containsValue(mainCursor)) {
                             minefield.getPoints()[mainCursor].setPointClicked();
                             outList.put(mainCursor, mainCursor);
                         }
-
-                        int cursor = mainCursor-1;
-                        if(cursor>=0&&(cursor+1)%minefield.getWidth()!=0){
+                        int cursor = mainCursor - 1;
+                        if (cursor >= 0 && (cursor + 1) % minefield.getWidth() != 0) {
                             defineEmptyPoints(cursor, inList, outList);
                         }
-
-                        cursor = mainCursor-minefield.getWidth()-1;
-                        if(cursor>=0&&(cursor+1)%minefield.getWidth()!=0){
+                        cursor = mainCursor - minefield.getWidth() - 1;
+                        if (cursor >= 0 && (cursor + 1) % minefield.getWidth() != 0) {
                             defineEmptyPoints(cursor, inList, outList);
                         }
-
-                        cursor = mainCursor-minefield.getWidth();
-                        if(cursor>=0){
+                        cursor = mainCursor - minefield.getWidth();
+                        if (cursor >= 0) {
                             defineEmptyPoints(cursor, inList, outList);
                         }
-
-                        cursor = mainCursor-minefield.getWidth()+1;
-                        if(cursor>=0&&cursor%minefield.getWidth()!=0){
+                        cursor = mainCursor - minefield.getWidth() + 1;
+                        if (cursor >= 0 && cursor % minefield.getWidth() != 0) {
                             defineEmptyPoints(cursor, inList, outList);
                         }
-
-                        cursor = mainCursor+1;
-                        if(cursor<minefield.getPointCount()&&cursor%minefield.getWidth()!=0){
+                        cursor = mainCursor + 1;
+                        if (cursor < minefield.getPointCount() && cursor % minefield.getWidth() != 0) {
                             defineEmptyPoints(cursor, inList, outList);
                         }
-
-                        cursor = mainCursor+minefield.getWidth()+1;
-                        if(cursor<minefield.getPointCount()&&cursor%minefield.getWidth()!=0){
+                        cursor = mainCursor + minefield.getWidth() + 1;
+                        if (cursor < minefield.getPointCount() && cursor % minefield.getWidth() != 0) {
                             defineEmptyPoints(cursor, inList, outList);
                         }
-
-                        cursor = mainCursor+minefield.getWidth();
-                        if(cursor<minefield.getPointCount()){
+                        cursor = mainCursor + minefield.getWidth();
+                        if (cursor < minefield.getPointCount()) {
                             defineEmptyPoints(cursor, inList, outList);
                         }
-
-                        cursor = mainCursor+minefield.getWidth()-1;
-                        if(cursor<minefield.getPointCount()&&(cursor+1)%minefield.getWidth()!=0){
+                        cursor = mainCursor + minefield.getWidth() - 1;
+                        if (cursor < minefield.getPointCount() && (cursor + 1) % minefield.getWidth() != 0) {
                             defineEmptyPoints(cursor, inList, outList);
                         }
                         adapter.notifyDataSetChanged();
                     } while (!inList.isEmpty());
-                    minefield.setPointsFinishedCount(minefield.getPointsFinishedCount()-1);
+                    minefield.setPointsFinishedCount(minefield.getPointsFinishedCount() - 1);
                     adapter.notifyDataSetChanged();
                 }
-                    if(minefield.getPointsFinishedCount()==(minefield.getPointCount()-minefield.getMinesCount()-1)){
-                        for (int i = 0;i<minefield.getPoints().length;i++){
-                            minefield.getPoints()[position].setPointClicked();
-                            if(minefield.getPoints()[i].getData().equals("*")){
-                                minefield.getPoints()[i].setPointGoodCheckedMines();
-                            }
+                if (minefield.getPointsFinishedCount() == (minefield.getPointCount() - minefield.getMinesCount() - 1)) {
+                    for (int i = 0; i < minefield.getPoints().length; i++) {
+                        minefield.getPoints()[position].setPointClicked();
+                        if (minefield.getPoints()[i].getData().equals("*")) {
+                            minefield.getPoints()[i].setPointGoodCheckedMines();
                         }
-                        adapter.notifyDataSetChanged();
-                        minefield.setMinesOnScreen(0);
-                        minesC.setText("Mines: "+minefield.getMinesOnScreen());
-                        Toast.makeText(MainActivity.this, "Congratulations! You deactivate all the mines.", Toast.LENGTH_LONG).show();
-                        startStop.setText("Start");
-                        settings.setEnabled(true);
-                        AddResultDialog resultDialog = AddResultDialog.newInstance(minefield.getPlayTime(), gameLevel);
-                        myTimerTask.cancel(true);
-                        resultDialog.show(getSupportFragmentManager(), "");
-                        return;
                     }
+                    adapter.notifyDataSetChanged();
+                    minefield.setMinesOnScreen(0);
+                    minesC.setText("Mines: " + minefield.getMinesOnScreen());
+                    Toast.makeText(MainActivity.this, "Congratulations! You deactivate all the mines.", Toast.LENGTH_LONG).show();
+                    startStop.setText("Start");
+                    settings.setEnabled(true);
+                    AddResultDialog resultDialog = AddResultDialog.newInstance(minefield.getPlayTime(), gameLevel);
+                    myTimerTask.cancel(true);
+                    resultDialog.show(getSupportFragmentManager(), "");
+                    return;
+                }
                 minefield.getPoints()[position].setPointClicked();
                 adapter.notifyDataSetChanged();
             }
         });
 
-        //Виконується при довгому натисканні(ставиться забирається міна)
         gvMinesfield.setOnItemLongClickListener(new AdapterView.OnItemLongClickListener() {
             @Override
             public boolean onItemLongClick(AdapterView<?> parent, View view, int position, long id) {
-                if (!minefield.getPoints()[position].isFinished()) {
+                if (minefield.getPoints()[position].isFinish()) {
                     if (minefield.getPoints()[position].isEnabledPoint()) {
                         minefield.getPoints()[position].setPointLongClicked();
-                        minefield.setMinesOnScreen(minefield.getMinesOnScreen()-1);
-                        minesC.setText("Mines: "+minefield.getMinesOnScreen());
+                        minefield.setMinesOnScreen(minefield.getMinesOnScreen() - 1);
+                        minesC.setText("Mines: " + minefield.getMinesOnScreen());
                         adapter.notifyDataSetChanged();
 
                     } else if (!minefield.getPoints()[position].isEnabledPoint()) {
                         minefield.getPoints()[position].setCancelLongClicked();
-                        minefield.setMinesOnScreen(minefield.getMinesOnScreen()+1);
-                        minesC.setText("Mines: "+minefield.getMinesOnScreen());
+                        minefield.setMinesOnScreen(minefield.getMinesOnScreen() + 1);
+                        minesC.setText("Mines: " + minefield.getMinesOnScreen());
                         adapter.notifyDataSetChanged();
                     }
                     return true;
@@ -247,26 +227,24 @@ public class MainActivity extends AppCompatActivity {
         });
     }
 
-    //Допоміжний метод для визначення кількості натиснутих поінтів при множинному визначенні
-    private void defineEmptyPoints(int cursor, Stack<Integer> inList, HashMap<Integer, Integer> outList){
-        if(minefield.getData()[cursor].equals("")){
-            if(!outList.containsValue(cursor)&&!inList.contains(cursor)){
-                if(!minefield.getPoints()[cursor].isFinished()){
+    private void defineEmptyPoints(int cursor, Stack<Integer> inList, HashMap<Integer, Integer> outList) {
+        if (minefield.getData()[cursor].equals("")) {
+            if (!outList.containsValue(cursor) && !inList.contains(cursor)) {
+                if (minefield.getPoints()[cursor].isFinish()) {
                     inList.push(cursor);
                 }
             }
         }
-        if(!minefield.getData()[cursor].equals("")){
-            if(!outList.containsValue(cursor)){
+        if (!minefield.getData()[cursor].equals("")) {
+            if (!outList.containsValue(cursor)) {
                 outList.put(cursor, cursor);
-                if(!minefield.getPoints()[cursor].isFinished()) {
+                if (minefield.getPoints()[cursor].isFinish()) {
                     minefield.getPoints()[cursor].setPointClicked();
                 }
             }
         }
     }
 
-    //Виконується при натисканні на кнопку Start Stop
     public void onStartStop(View view) {
         switch (startStop.getText().toString()) {
             case "Start":
@@ -276,53 +254,45 @@ public class MainActivity extends AppCompatActivity {
                 minesC.setText("Mines: " + minefield.getMinesOnScreen());
                 startStop.setText("Stop");
                 settings.setEnabled(false);
-
                 minefield.setMinesOnScreen(minefield.getMinesCount());
-
                 adapter.notifyDataSetChanged();
                 myTimerTask = new MyTimerTask();
                 myTimerTask.execute();
                 break;
             case "Stop":
-
                 myTimerTask.cancel(true);
                 minesC.setText("Mines: 0");
                 timerT.setText("Time: 0:00");
                 startStop.setText("Start");
                 settings.setEnabled(true);
-
                 setPointsStop();
-
                 adapter.notifyDataSetChanged();
                 break;
         }
     }
 
-    //Метод для відображення результатів при натисканні на кнопку
-    public void onShowRecords(View view){
+    public void onShowRecords(View view) {
         ResultFragment dialog = new ResultFragment();
         dialog.show(getSupportFragmentManager(), "");
     }
-    //Метод для відображення настройок при натисканні на кнопку
-    public void onShowSettings(View view){
+
+    public void onShowSettings(View view) {
         Intent intent = new Intent(MainActivity.this, MyPreferences.class);
         startActivity(intent);
     }
 
-    //Встановлення значень при початку гри при натисканні на кнопку Start
-    private void setPointsStart(){
-        for(int i = 0; i< minefield.getPoints().length;i++){
+    private void setPointsStart() {
+        for (int i = 0; i < minefield.getPoints().length; i++) {
             minefield.getPoints()[i].setPointStart();
         }
     }
-    //Встановлення початкових значень пунктам при натисканні на кнопку Stop
-    private void setPointsStop(){
-        for(int i = 0; i< minefield.getPoints().length;i++){
+
+    private void setPointsStop() {
+        for (int i = 0; i < minefield.getPoints().length; i++) {
             minefield.getPoints()[i].setPointStop();
         }
     }
 
-    //Отримання збереженого обєкта minefield при повороті екрана або при знищенні
     @Nullable
     @Override
     public Object onRetainCustomNonConfigurationInstance() {
@@ -336,8 +306,7 @@ public class MainActivity extends AppCompatActivity {
         unregisterReceiver(receiver);
     }
 
-    //Внутрішній лас для асинхронної роботи таймера
-    private class MyTimerTask extends AsyncTask<Void, String, Void>{
+    private class MyTimerTask extends AsyncTask<Void, String, Void> {
         private int min = 0;
         private int sec = 0;
         private String res = "";
@@ -346,7 +315,7 @@ public class MainActivity extends AppCompatActivity {
         protected Void doInBackground(Void... voids) {
             do {
                 res = min + ":" + sec;
-                if(res.length()<4)res = min + ":0" + sec;
+                if (res.length() < 4) res = min + ":0" + sec;
                 minefield.setPlayTime(res);
                 publishProgress(res);
                 try {
@@ -354,93 +323,84 @@ public class MainActivity extends AppCompatActivity {
                 } catch (InterruptedException e) {
                     e.printStackTrace();
                 }
-                if(sec==59){
-                    sec=-1;
+                if (sec == 59) {
+                    sec = -1;
                     min++;
                 }
-                if(min==59&&sec==59){
-                    min=0;
-                    sec=0;
+                if (min == 59 && sec == 59) {
+                    min = 0;
+                    sec = 0;
                     cancel(true);
                 }
                 sec++;
 
-            }while (!isCancelled());
+            } while (!isCancelled());
             return null;
         }
 
-        //Оновлює значення таймера
         @Override
         protected void onProgressUpdate(String... values) {
             super.onProgressUpdate(values);
-            timerT.setText("Time: "+values[0]);
+            timerT.setText("Time: " + values[0]);
         }
     }
 
-
-    //Внутрішній клас який виконується при поверненні значень з Preferences
-    private class MyReceiver extends BroadcastReceiver{
+    private class MyReceiver extends BroadcastReceiver {
         private boolean changed = false;
+
         @Override
         public void onReceive(Context context, Intent intent) {
-
-            if(intent.hasExtra(MyPreferences.PREF_SPACING_KEY)){
+            if (intent.hasExtra(MyPreferences.PREF_SPACING_KEY)) {
                 changed = true;
                 gvSpacing = Integer.parseInt(sp.getString("spacing", "1"));
-                Log.d("myLog", "Spacing changed to: "+gvSpacing);
                 gvMinesfield.setHorizontalSpacing(gvSpacing);
                 gvMinesfield.setVerticalSpacing(gvSpacing);
             }
-            if (intent.hasExtra(MyPreferences.PREF_WEIGHT_KEY)){
+            if (intent.hasExtra(MyPreferences.PREF_WEIGHT_KEY)) {
                 changed = true;
-                Log.d("myLog", "Weight changed to: "+sp.getString("listSetting", "Easy"));
-                switch (sp.getString("listSetting", "Easy")){
+                switch (sp.getString("listSetting", "Easy")) {
                     case "Easy":
                         minefield.setWidth(DefMinefieldSettings.Easy.WIDTH);
                         minefield.setHeight(DefMinefieldSettings.Easy.HEIGHT);
-                        minefield.setKoefMines(DefMinefieldSettings.Easy.MINES_PERCENT*0.01);
+                        minefield.setKoefMines(DefMinefieldSettings.Easy.MINES_PERCENT * 0.01);
                         gvMinesfield.setNumColumns(DefMinefieldSettings.Easy.WIDTH);
                         break;
                     case "Medium":
                         minefield.setWidth(DefMinefieldSettings.Medium.WIDTH);
                         minefield.setHeight(DefMinefieldSettings.Medium.HEIGHT);
-                        minefield.setKoefMines(DefMinefieldSettings.Medium.MINES_PERCENT*0.01);
+                        minefield.setKoefMines(DefMinefieldSettings.Medium.MINES_PERCENT * 0.01);
                         gvMinesfield.setNumColumns(DefMinefieldSettings.Medium.WIDTH);
                         break;
                     case "Hard":
                         minefield.setWidth(DefMinefieldSettings.Hard.WIDTH);
                         minefield.setHeight(DefMinefieldSettings.Hard.HEIGHT);
-                        minefield.setKoefMines(DefMinefieldSettings.Hard.MINES_PERCENT*0.01);
+                        minefield.setKoefMines(DefMinefieldSettings.Hard.MINES_PERCENT * 0.01);
                         gvMinesfield.setNumColumns(DefMinefieldSettings.Hard.WIDTH);
                         break;
                     case "Custom":
                         minefield.setWidth(Integer.parseInt(sp.getString("mWidth", "8")));
                         minefield.setHeight(Integer.parseInt(sp.getString("mHeight", "13")));
-                        minefield.setKoefMines(Integer.parseInt(sp.getString("mMinesCount", "17"))*0.01);
+                        minefield.setKoefMines(Integer.parseInt(sp.getString("mMinesCount", "17")) * 0.01);
                         gvMinesfield.setNumColumns(Integer.parseInt(sp.getString("mWidth", "8")));
                         break;
                 }
             }
-            if(intent.hasExtra(MyPreferences.PREF_WIDTH_KEY)){
+            if (intent.hasExtra(MyPreferences.PREF_WIDTH_KEY)) {
                 changed = true;
-                Log.d("myLog", "Width changed to: "+sp.getString("mWidth", "8"));
                 minefield.setWidth(Integer.parseInt(sp.getString("mWidth", "8")));
                 gvMinesfield.setNumColumns(Integer.parseInt(sp.getString("mWidth", "8")));
             }
-            if(intent.hasExtra(MyPreferences.PREF_HEIGHT_KEY)){
+            if (intent.hasExtra(MyPreferences.PREF_HEIGHT_KEY)) {
                 changed = true;
-                Log.d("myLog", "Height changed to: "+sp.getString("mHeight", "13"));
                 minefield.setHeight(Integer.parseInt(sp.getString("mHeight", "13")));
             }
-            if(intent.hasExtra(MyPreferences.PREF_MINES_PERCENT_KEY)){
+            if (intent.hasExtra(MyPreferences.PREF_MINES_PERCENT_KEY)) {
                 changed = true;
-                Log.d("myLog", "Mines percents changed to: "+sp.getString("mMinesCount", "17"));
-                minefield.setKoefMines(Integer.parseInt(sp.getString("mMinesCount", "17"))*0.01);
+                minefield.setKoefMines(Integer.parseInt(sp.getString("mMinesCount", "17")) * 0.01);
             }
 
-            if(intent.hasExtra(MyPreferences.PREF_END_SETTINGS_KEY)) {
-                if(changed) {
-                    Log.d("myLog", "End All Settings!");
+            if (intent.hasExtra(MyPreferences.PREF_END_SETTINGS_KEY)) {
+                if (changed) {
                     minefield.generateNewMinefield();
                     minesC.setText("Mines: 0");
                     timerT.setText("Time: 0:00");

@@ -1,5 +1,6 @@
 package com.example.myminesweeper.ResultDatabase;
 
+import android.annotation.SuppressLint;
 import android.app.AlertDialog;
 import android.app.Dialog;
 import android.content.Context;
@@ -7,44 +8,25 @@ import android.content.DialogInterface;
 import android.database.Cursor;
 import android.database.sqlite.SQLiteDatabase;
 import android.os.Bundle;
+import android.view.View;
+import android.widget.AdapterView;
+import android.widget.ListView;
+import android.widget.Toast;
 
 import androidx.annotation.NonNull;
 import androidx.annotation.Nullable;
 import androidx.fragment.app.DialogFragment;
-import androidx.fragment.app.Fragment;
-
-import android.view.ActionMode;
-import android.view.ContextMenu;
-import android.view.KeyEvent;
-import android.view.LayoutInflater;
-import android.view.Menu;
-import android.view.MenuItem;
-import android.view.View;
-import android.view.ViewGroup;
-import android.widget.AbsListView;
-import android.widget.AdapterView;
-import android.widget.LinearLayout;
-import android.widget.ListAdapter;
-import android.widget.ListView;
-import android.widget.SimpleCursorAdapter;
-import android.widget.TextView;
-import android.widget.Toast;
 
 import com.example.myminesweeper.R;
 
-import java.security.acl.LastOwnerException;
-import java.util.List;
-
-
 public class ResultFragment extends DialogFragment {
     private View title;
-
     private DBHelper dbHelper;
     private SQLiteDatabase database;
     private Cursor cursor;
-
     private ListView listView;
 
+    @SuppressLint("InflateParams")
     @Override
     public void onAttach(@NonNull Context context) {
         super.onAttach(context);
@@ -54,11 +36,8 @@ public class ResultFragment extends DialogFragment {
     @NonNull
     @Override
     public Dialog onCreateDialog(@Nullable Bundle savedInstanceState) {
-        //Підготовлює базу даних
         prepareDatabase();
-        //Створює список і заповняє його днами результатів
         prepareListResults();
-        //Створює діалог з результатами
         AlertDialog.Builder builder = new AlertDialog.Builder(getContext());
         builder.setCustomTitle(title);
         builder.setView(listView);
@@ -69,14 +48,14 @@ public class ResultFragment extends DialogFragment {
         });
         return builder.create();
     }
-    //Підготовка бази даних
-    private void prepareDatabase(){
+
+    private void prepareDatabase() {
         dbHelper = new DBHelper(getContext());
         database = dbHelper.getWritableDatabase();
         cursor = database.query(DBHelper.TABLE_NAME, null, null, null, null, null, DBHelper.TABLE_COLUMN_RESULT_SECONDS);
     }
-    //Підготовка списку
-    private void prepareListResults(){
+
+    private void prepareListResults() {
         String[] from = new String[]{DBHelper.TABLE_COLUMN_NAME, DBHelper.TABLE_COLUMN_RESULT, DBHelper.TABLE_COLUMN_LEVEL};
         int[] to = new int[]{R.id.itemName, R.id.itemResult, R.id.itemLevel};
         final MySimpleCursorAdapter adapter = new MySimpleCursorAdapter(getContext(), R.layout.cursor_item, cursor, from, to);
@@ -86,9 +65,8 @@ public class ResultFragment extends DialogFragment {
         listView.setOnItemLongClickListener(new AdapterView.OnItemLongClickListener() {
             @Override
             public boolean onItemLongClick(AdapterView<?> parent, View view, int position, long id) {
-                TextView textView = (TextView) view.findViewById(R.id.itemName);
                 long vid = adapter.getItemId(position);
-                database.delete(DBHelper.TABLE_NAME, DBHelper.TABLE_COLUMN_ID+" = "+vid, null);
+                database.delete(DBHelper.TABLE_NAME, DBHelper.TABLE_COLUMN_ID + " = " + vid, null);
                 cursor.requery();
                 Toast.makeText(getActivity(), "Result was successfully deleted!", Toast.LENGTH_SHORT).show();
                 return false;

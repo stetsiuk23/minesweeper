@@ -1,14 +1,11 @@
 package com.example.myminesweeper;
 
-
 public final class DefMinefieldSettings {
     public static final int SPACING =  1;
-
     public static final String LEVEL_EASY =  "Easy";
     public static final String LEVEL_MEDIUM =  "Medium";
     public static final String LEVEL_HARD =  "Hard";
     public static final String LEVEL_CUSTOM =  "Custom";
-    public static final String LEVEL_DEFAULT =  LEVEL_EASY;
 
     public static final class Easy{
         public static final int WIDTH =  8;

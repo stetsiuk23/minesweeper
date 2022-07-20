@@ -2,7 +2,6 @@ package com.example.myminesweeper.Preferences;
 
 import android.content.Intent;
 import android.os.Bundle;
-import android.preference.EditTextPreference;
 import android.preference.ListPreference;
 import android.preference.Preference;
 import android.preference.PreferenceActivity;
@@ -14,8 +13,6 @@ import com.example.myminesweeper.R;
 
 public class MyPreferences extends PreferenceActivity {
     public static final String PREF_RESEIVER_ACTION = "com.example.myminesweeper/prefReceiverCallback";
-
-    //Константи Keys для надсилання і отримання даних Intent
     public static final String PREF_WIDTH_KEY = "pref_width";
     public static final String PREF_HEIGHT_KEY = "pref_height";
     public static final String PREF_MINES_PERCENT_KEY = "pref_mines_percent";
@@ -25,34 +22,25 @@ public class MyPreferences extends PreferenceActivity {
 
     private ListPreference listPreference;
     private PreferenceCategory category;
-
     private ListPreference width, height, minesPercent, spacing;
-
     private Intent intent;
-    private int currentWidth, currentHeight, currentMinesCount;
 
     @Override
     protected void onCreate(final Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         addPreferencesFromResource(R.xml.pref);
-        //Створюємо Intent ддля повернення даних в Receiver
         intent = new Intent(PREF_RESEIVER_ACTION);
-        //Знаходимо всі наші Preferences елементи і встановлюємо для них Listeners
         findPrefAndSetListeners();
-        //Провіряємо і отримуємо теперішнє значення ListPreference
         checkListPref();
     }
 
-    //Знаходження елементів і встановлення для них Callbacks
-    private void findPrefAndSetListeners(){
+    private void findPrefAndSetListeners() {
         width = (ListPreference) findPreference("mWidth");
         height = (ListPreference) findPreference("mHeight");
         minesPercent = (ListPreference) findPreference("mMinesCount");
         spacing = (ListPreference) findPreference("spacing");
-
         listPreference = (ListPreference) findPreference("listSetting");
         category = (PreferenceCategory) findPreference("customCompl");
-
         width.setOnPreferenceChangeListener(customCompliclistener);
         height.setOnPreferenceChangeListener(customCompliclistener);
         minesPercent.setOnPreferenceChangeListener(customCompliclistener);
@@ -60,9 +48,8 @@ public class MyPreferences extends PreferenceActivity {
         listPreference.setOnPreferenceChangeListener(listListener);
     }
 
-    //Провіряє теперішнє значення ListPreference
-    private void checkListPref(){
-        switch (listPreference.getValue()){
+    private void checkListPref() {
+        switch (listPreference.getValue()) {
             case "Easy":
                 setEasySettings();
                 break;
@@ -76,61 +63,63 @@ public class MyPreferences extends PreferenceActivity {
                 setCustomSettings();
                 break;
         }
-        listPreference.setSummary("Weight: "+listPreference.getValue());
-        width.setSummary("Width: "+width.getValue());
-        height.setSummary("Height: "+height.getValue());
-        minesPercent.setSummary("Mines percent: "+minesPercent.getValue());
-        spacing.setSummary("Spacing: "+spacing.getValue());
+        listPreference.setSummary("Weight: " + listPreference.getValue());
+        width.setSummary("Width: " + width.getValue());
+        height.setSummary("Height: " + height.getValue());
+        minesPercent.setSummary("Mines percent: " + minesPercent.getValue());
+        spacing.setSummary("Spacing: " + spacing.getValue());
     }
 
-    //Callback виконується при знімі значення ListPreference
-    private Preference.OnPreferenceChangeListener listListener = new Preference.OnPreferenceChangeListener() {
-        @Override
-        public boolean onPreferenceChange(Preference preference, Object newValue) {
-            intent = new Intent(PREF_RESEIVER_ACTION);
-            switch ((String) newValue){
-                case "Easy":
-                    intent.putExtra(PREF_WEIGHT_KEY, "Easy");
-                    setEasySettings();
-                    break;
-                case "Medium":
-                    intent.putExtra(PREF_WEIGHT_KEY, "Medium");
-                    setMediumSettings();
-                    break;
-                case "Hard":
-                    intent.putExtra(PREF_WEIGHT_KEY, "Hard");
-                    setHardSettings();
-                    break;
-                case "Custom":
-                    intent.putExtra(PREF_WEIGHT_KEY, "Custom");
-                    setCustomSettings();
-                    break;
-            }
-            sendBroadcast(intent);
-            return true;
-        }
-    };
+    private final Preference.OnPreferenceChangeListener listListener;
 
-    //Callback виконується при зніні значень Custom
-    private Preference.OnPreferenceChangeListener customCompliclistener = new Preference.OnPreferenceChangeListener() {
+    {
+        listListener = new Preference.OnPreferenceChangeListener() {
+            @Override
+            public boolean onPreferenceChange(Preference preference, Object newValue) {
+                intent = new Intent(PREF_RESEIVER_ACTION);
+                switch ((String) newValue) {
+                    case "Easy":
+                        intent.putExtra(PREF_WEIGHT_KEY, "Easy");
+                        setEasySettings();
+                        break;
+                    case "Medium":
+                        intent.putExtra(PREF_WEIGHT_KEY, "Medium");
+                        setMediumSettings();
+                        break;
+                    case "Hard":
+                        intent.putExtra(PREF_WEIGHT_KEY, "Hard");
+                        setHardSettings();
+                        break;
+                    case "Custom":
+                        intent.putExtra(PREF_WEIGHT_KEY, "Custom");
+                        setCustomSettings();
+                        break;
+                }
+                sendBroadcast(intent);
+                return true;
+            }
+        };
+    }
+
+    private final Preference.OnPreferenceChangeListener customCompliclistener = new Preference.OnPreferenceChangeListener() {
         @Override
         public boolean onPreferenceChange(Preference preference, Object newValue) {
             intent = new Intent(PREF_RESEIVER_ACTION);
-            switch (preference.getKey()){
+            switch (preference.getKey()) {
                 case "mWidth":
-                    width.setSummary("Width: "+(String)newValue);
+                    width.setSummary("Width: " + (String) newValue);
                     intent.putExtra(PREF_WIDTH_KEY, Integer.parseInt((String) newValue));
                     break;
                 case "mHeight":
-                    height.setSummary("Height: "+(String)newValue);
+                    height.setSummary("Height: " + (String) newValue);
                     intent.putExtra(PREF_HEIGHT_KEY, Integer.parseInt((String) newValue));
                     break;
                 case "mMinesCount":
-                    minesPercent.setSummary("Percents of mines: "+(String)newValue);
+                    minesPercent.setSummary("Percents of mines: " + (String) newValue);
                     intent.putExtra(PREF_MINES_PERCENT_KEY, Integer.parseInt((String) newValue));
                     break;
                 case "spacing":
-                    spacing.setSummary("Spacing: "+(String)newValue);
+                    spacing.setSummary("Spacing: " + (String) newValue);
                     intent.putExtra(PREF_SPACING_KEY, Integer.parseInt((String) newValue));
                     break;
             }
@@ -147,30 +136,27 @@ public class MyPreferences extends PreferenceActivity {
         sendBroadcast(intent);
     }
 
-
-
-    //Встановлює Easy настройки
-    private void setEasySettings(){
+    private void setEasySettings() {
         Toast.makeText(getBaseContext(), DefMinefieldSettings.LEVEL_EASY, Toast.LENGTH_SHORT).show();
-        listPreference.setSummary("Weight: "+DefMinefieldSettings.LEVEL_EASY);
+        listPreference.setSummary("Weight: " + DefMinefieldSettings.LEVEL_EASY);
         category.setEnabled(false);
     }
-    //Встановлює Medium настройки
-    private void setMediumSettings(){
+
+    private void setMediumSettings() {
         Toast.makeText(getBaseContext(), DefMinefieldSettings.LEVEL_MEDIUM, Toast.LENGTH_SHORT).show();
-        listPreference.setSummary("Weight: "+DefMinefieldSettings.LEVEL_MEDIUM);
+        listPreference.setSummary("Weight: " + DefMinefieldSettings.LEVEL_MEDIUM);
         category.setEnabled(false);
     }
-    //Встановлює Hard настройки
-    private void setHardSettings(){
+
+    private void setHardSettings() {
         Toast.makeText(getBaseContext(), DefMinefieldSettings.LEVEL_HARD, Toast.LENGTH_SHORT).show();
-        listPreference.setSummary("Weight: "+DefMinefieldSettings.LEVEL_HARD);
+        listPreference.setSummary("Weight: " + DefMinefieldSettings.LEVEL_HARD);
         category.setEnabled(false);
     }
-    //Встановлює Custom настройки
-    private void setCustomSettings(){
+
+    private void setCustomSettings() {
         Toast.makeText(getBaseContext(), DefMinefieldSettings.LEVEL_CUSTOM, Toast.LENGTH_SHORT).show();
-        listPreference.setSummary("Weight: "+DefMinefieldSettings.LEVEL_CUSTOM);
+        listPreference.setSummary("Weight: " + DefMinefieldSettings.LEVEL_CUSTOM);
         category.setEnabled(true);
     }
 }

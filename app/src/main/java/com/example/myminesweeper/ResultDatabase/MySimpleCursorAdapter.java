@@ -1,8 +1,8 @@
 package com.example.myminesweeper.ResultDatabase;
 
+import android.annotation.SuppressLint;
 import android.content.Context;
 import android.database.Cursor;
-import android.util.Log;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.SimpleCursorAdapter;
@@ -16,11 +16,12 @@ public class MySimpleCursorAdapter extends SimpleCursorAdapter {
         super(context, layout, c, from, to);
     }
 
+    @SuppressLint("SetTextI18n")
     @Override
     public View getView(int position, View convertView, ViewGroup parent) {
         View view = super.getView(position, convertView, parent);
         TextView textView = view.findViewById(R.id.itemPos);
-        textView.setText((position+1)+"");
+        textView.setText((position + 1) + "");
         return view;
     }
 }

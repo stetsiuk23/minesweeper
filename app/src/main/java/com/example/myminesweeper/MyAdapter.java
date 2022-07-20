@@ -1,8 +1,6 @@
 package com.example.myminesweeper;
 
 import android.content.Context;
-import android.util.Log;
-import android.view.Gravity;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
@@ -11,12 +9,12 @@ import android.widget.LinearLayout;
 import android.widget.TextView;
 
 public class MyAdapter extends BaseAdapter {
-    private int spacing;
-    private Minefield minefield;
-    private int item;
-    private LayoutInflater layoutInflater;
+    private final int spacing;
+    private final Minefield minefield;
+    private final int item;
+    private final LayoutInflater layoutInflater;
 
-    public MyAdapter(Context context,int item, Minefield minefield, int spacing){
+    public MyAdapter(Context context, int item, Minefield minefield, int spacing) {
         this.spacing = spacing;
         this.minefield = minefield;
         this.item = item;
@@ -41,34 +39,30 @@ public class MyAdapter extends BaseAdapter {
     @Override
     public View getView(int position, View convertView, ViewGroup parent) {
         ViewHolder viewHolder;
-        if(convertView==null){
+        if (convertView == null) {
             convertView = layoutInflater.inflate(item, parent, false);
             viewHolder = new ViewHolder(convertView);
             convertView.setTag(viewHolder);
-        }
-        else{
+        } else {
             viewHolder = (ViewHolder) convertView.getTag();
         }
         Minefield.Point point = minefield.getPoints()[position];
-        //viewHolder.myLin.getLayoutParams().width = parent.getWidth()/(minefield.getHeight())-spacing;
-        viewHolder.myLin.getLayoutParams().height = parent.getHeight()/(minefield.getHeight())-spacing;
-        Log.d("mLog", ""+viewHolder.myLin.getLayoutParams().height);
-        viewHolder.tvData.setVisibility(point.getDataVisibility()?View.VISIBLE:View.INVISIBLE);
+        viewHolder.myLin.getLayoutParams().height = parent.getHeight() / (minefield.getHeight()) - spacing;
+        viewHolder.tvData.setVisibility(point.getDataVisibility() ? View.VISIBLE : View.INVISIBLE);
         viewHolder.tvData.setText(point.getData());
         viewHolder.tvData.setTextColor(point.getPointColor());
-        viewHolder.tvData.setTextSize((float) (parent.getHeight()/(minefield.getHeight())*0.25));
-        Log.d("myLog", (float) (parent.getHeight()/(minefield.getHeight())*0.25)+"");
+        viewHolder.tvData.setTextSize((float) (parent.getHeight() / (minefield.getHeight()) * 0.25));
         viewHolder.myLin.setBackground(point.getCurrentState());
         viewHolder.myLin.setEnabled(point.isEnabledPoint());
         parent.setEnabled(point.isEnabled());
-
         return convertView;
     }
 
-    private class ViewHolder {
+    private static class ViewHolder {
         final LinearLayout myLin;
         final TextView tvData;
-        ViewHolder(View view){
+
+        ViewHolder(View view) {
             myLin = (LinearLayout) view.findViewById(R.id.myLin);
             tvData = (TextView) view.findViewById(R.id.tvData);
         }
